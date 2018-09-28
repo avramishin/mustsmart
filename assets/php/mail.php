@@ -3,21 +3,10 @@
 /* =====================================================
  * change $email_to and $email_form
  * ===================================================== */
-$email_to = "your_email@yourdomain.com"; // the email address to which the form sends submissions
-$email_from = "do-not-reply@yourdomain.com"; // the email address used as "From" when submissions are sent to the $email_to above (important that it has the same domain as the domain of your site - unless you have configured your server's mail settings)
-$email_subject = "Contact Form submitted";
+$email_to = "orders@mustsmart.net"; // the email address to which the form sends submissions
+$email_from = "orders@mustsmart.net"; // the email address used as "From" when submissions are sent to the $email_to above (important that it has the same domain as the domain of your site - unless you have configured your server's mail settings)
 
-// check CAPTCHA code first
-session_start();
-if (!isset($_POST["captcha"]) || 
-    $_SESSION["captcha_code"] != $_POST["captcha"])
-{
-    echo 'captcha';
-    die();
-}
-
-if(isset($_POST['email']))
-{
+if (isset($_POST['email'])) {
 
     function return_error($error)
     {
@@ -28,8 +17,8 @@ if(isset($_POST['email']))
     // check for empty required fields
     if (!isset($_POST['name']) ||
         !isset($_POST['email']) ||
-        !isset($_POST['message']))
-    {
+        !isset($_POST['message'])
+    ) {
         return_error('incomplete');
     }
 
@@ -44,22 +33,19 @@ if(isset($_POST['email']))
 
     // name
     $name_exp = "/^[a-z0-9 .\-]+$/i";
-    if (!preg_match($name_exp,$name))
-    {
+    if (!preg_match($name_exp, $name)) {
         $this_error = 'Please enter a valid name.';
-        $error_message .= ($error_message == "") ? $this_error : "<br/>".$this_error;
-    }        
+        $error_message .= ($error_message == "") ? $this_error : "<br/>" . $this_error;
+    }
 
     $email_exp = '/^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/';
-    if (!preg_match($email_exp,$email))
-    {
+    if (!preg_match($email_exp, $email)) {
         $this_error = 'Please enter a valid email address.';
-        $error_message .= ($error_message == "") ? $this_error : "<br/>".$this_error;
-    } 
+        $error_message .= ($error_message == "") ? $this_error : "<br/>" . $this_error;
+    }
 
     // if there are validation errors
-    if(strlen($error_message) > 0)
-    {
+    if (strlen($error_message) > 0) {
         return_error($error_message);
     }
 
@@ -72,28 +58,24 @@ if(isset($_POST['email']))
         return str_replace($bad, "", $string);
     }
 
-    $email_message .= "Name: ".clean_string($name)."\n";
-    $email_message .= "Email: ".clean_string($email)."\n";
-    $email_message .= "Contact number: ".clean_string($contact_number)."\n";
-    $email_message .= "Message: ".clean_string($message)."\n";
+    $email_message .= "Name: " . clean_string($name) . "\n";
+    $email_message .= "Email: " . clean_string($email) . "\n";
+    $email_message .= "Contact number: " . clean_string($contact_number) . "\n";
+    $email_message .= "Message: " . clean_string($message) . "\n";
+
+    $email_subject = "Contact request from " . clean_string($name);
 
     // create email headers
-    $headers = 'From: '.$email_from."\r\n".
-    'Reply-To: '.$email."\r\n" .
-    'X-Mailer: PHP/' . phpversion();
-    if (mail($email_to, $email_subject, $email_message, $headers))
-    {
+    $headers = 'From: ' . $email_from . "\r\n" .
+        'Reply-To: ' . $email . "\r\n" .
+        'X-Mailer: PHP/' . phpversion();
+    if (mail($email_to, $email_subject, $email_message, $headers)) {
         echo 'success';
-    }
-    else 
-    {
+    } else {
         echo 'error';
-        die();        
+        die();
     }
-}
-else
-{
+} else {
     echo 'incomplete';
     die();
 }
-?>
